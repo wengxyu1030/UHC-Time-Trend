@@ -34,6 +34,18 @@ global INTER "${SOURCE}/Time_Series/INTER"
 global OUT "${SOURCE}/Time_Series/FINAL"
 
 ***********************************
+***** Prepare the Region Data *****
+***********************************
+
+import delimited using "${OUT}/iso3c_region.csv", varnames(1) clear
+rename alpha3 iso3c
+keep iso3c region subregion
+save "${OUT}/iso3c_region.dta",replace 
+
+//source: https://github.com/lukes/ISO-3166-Countries-with-Regional-Codes/blob/master/all/all.csv
+
+
+***********************************
 *** Combine the indicator result **
 ***********************************
 //ssc install fs
@@ -49,4 +61,18 @@ foreach f in `r(files)' {
 reshape long pop_,i(survey country iso3c year) j(varname) string
 rename pop_ pop
 
+replace iso3c = "SWZ" if country == "Eswatini" //add the missing iso code in the microdata. 
+
+merge m:1 iso3c using "${OUT}/iso3c_region.dta"
+
+tab country if _merge == 1 //please check if there's not-matched country
+drop _merge
+
+gen missing = (pop == .)
+
 save "${OUT}/DHS_Time_Series.dta",replace
+export excel "${OUT}/DHS_Time_Series.xlsx",firstrow(var) replace
+
+***********************************
+****** Generate the figures *******
+***********************************

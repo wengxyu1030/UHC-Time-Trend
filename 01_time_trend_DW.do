@@ -37,7 +37,8 @@ global OUT "${SOURCE}/Time_Series/FINAL"
 *** Combine the Microdata**
 ***************************
 //ssc install fs
-cd "${SOURCE}/FINAL"	
+global DATA "${SOURCE}/FINAL/new"
+cd "${DATA}"
 fs  *.dta
 local firstfile: word 1 of `r(files)'
 
@@ -46,7 +47,7 @@ local firstfile: word 1 of `r(files)'
 ***************************
 foreach survey in `r(files)' {
 
-use "${SOURCE}/FINAL/`survey'",clear
+use "${DATA}/`survey'",clear
 
     ***for variables generated from 1_antenatal_care 2_delivery_care 3_postnatal_care
 	foreach var of var c_anc	c_anc_any	c_anc_bp	c_anc_bp_q	c_anc_bs	c_anc_bs_q ///
