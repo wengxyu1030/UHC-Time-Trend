@@ -19,7 +19,7 @@ macro drop _all
 //NOTE FOR WINDOWS USERS : use "/" instead of "\" in your paths
 
 * Define root depend on the stata user. 
-if "`c(username)'" == "sunyining" local pc = 0
+if "`c(username)'" == "sunyining" local pc = 0 
 if "`c(username)'" == "xweng"     local pc = 1
 if `pc' == 0 global root "/Users/sunyining/OneDrive/MEASURE UHC DATA"
 if `pc' == 1 global root "C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA"
@@ -123,7 +123,8 @@ rename value_ value
 
 replace value = . if value == 0 
 
-*generate annual growth rate. 
+/*
+*generate annual growth rate. (to be updated)
 destring(year),replace
 sort country varname_my source year
 egen temp_max_year = max(year) if !mi(value),by(country varname_my source)
@@ -138,13 +139,14 @@ egen `var'_mean = mean(`var'),by(country varname_my source)
 
 gen g_value = (temp_max_year_v_mean-temp_min_year_v_mean)/(temp_max_year_mean - temp_min_year_mean) if temp_max_year_mean != temp_min_year_mean
 drop temp*
+*/
 
 *housekeeping
 drop if value == . & source != "my"
 
 rename varname_my varname
 
-keep binary survey country year surveytype varname source iso3c iso2c value region subregion missing surveyid g_value
+keep binary survey country year surveytype varname source iso3c iso2c value region subregion missing surveyid //g_value
 
 *generate standard deviation data (considering limited time-series, the sd only applies to survey-variable level comparing difference between source)
 egen hefpi_sd = sd(value) if inlist(source,"hefpi","my"),by(surveyid varname)
