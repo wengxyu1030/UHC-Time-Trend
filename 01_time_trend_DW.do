@@ -22,7 +22,7 @@ macro drop _all
 if "`c(username)'" == "sunyining" local pc = 0
 if "`c(username)'" == "xweng"     local pc = 1
 if `pc' == 0 global root "/Users/sunyining/OneDrive/MEASURE UHC DATA"
-if `pc' == 1 global root "C:/Users/XWeng/WBG/Sven Neelsen - World Bank/MEASURE UHC DATA"
+if `pc' == 1 global root "C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA"
 
 * Define path for data sources
 global SOURCE "${root}/STATA/DATA/SC"
@@ -37,7 +37,7 @@ global OUT "${SOURCE}/Time_Series/FINAL"
 *** Combine the Microdata**
 ***************************
 //ssc install fs
-global DATA "${SOURCE}/FINAL/new"
+global DATA "${SOURCE}/FINAL/Time_series_working" //this directory is temporary for monitor use, later to finalize
 cd "${DATA}"
 fs  *.dta
 local firstfile: word 1 of `r(files)'
@@ -83,7 +83,7 @@ use "${DATA}/`survey'",clear
     }
 	
 	***for variables generated from 10_child_mortality
-	foreach var of var mor_* {
+	foreach var of var mor_ali {
     egen pop_`var' = wtmean(`var'), weight(w_sampleweight)
     }
 	
@@ -93,7 +93,7 @@ use "${DATA}/`survey'",clear
 	}
 	
 	***for hiv indicators from 12_hiv
-    foreach var of var a_hiv*{
+    foreach var of var a_hiv {
     egen pop_`var' = wtmean(`var'),weight(a_hiv_sampleweight)
     }
               
@@ -101,10 +101,16 @@ use "${DATA}/`survey'",clear
     foreach var of var a_diab_treat  a_inpatient_1y a_bp_treat a_bp_sys a_bp_dial a_hi_bp140_or_on_med a_bp_meas {
 	egen pop_`var' = wtmean(`var'),weight(hh_sampleweight)
 	}
+	
+	***for hm related indicators 
+	foreach var of var hm_live hm_male hm_age_yrs hm_age_mon hm_headrel hm_stay {
+	egen pop_`var' = wtmean(`var'),weight(w_sampleweight)    
+	}
+
 
 *Please add the sample size for the variables too.
 
-keep pop_* survey country iso3c year
+keep pop_* survey country iso3c iso2c year
 keep if _n == 1
 
 save "${INTER}/Indicator_`survey'", replace  
