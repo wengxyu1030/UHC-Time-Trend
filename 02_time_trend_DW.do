@@ -117,6 +117,10 @@ drop temp_*
 *for some variable adjust the unit to keep consistency
 replace value_hefpi = value_hefpi/100 if inlist(varname_my,"w_height_1549","w_bmi_1549","a_bp_sys","a_bp_dial")
 
+*save the intermediate output for quality checking use. 
+keep varname* binary survey country year surveytype iso* value_* region subregion missing surveyid
+save "${OUT}/DHS_Time_Series_QC.dta",replace 
+
 *reshape to have source of data as column
 reshape long value_ ,i(survey country year surveytype varname_my) j(source) string
 rename value_ value

@@ -46,8 +46,12 @@ foreach f in `r(files)' {
  if "`f'" ~= "`firstfile'" append using `f'
 }
 
-keep if flag_dhs == 1| flag_hefpi == 1
+//keep if flag_dhs == 1| flag_hefpi == 1
 //br if flag_dhs == 1
+
+*for some variable adjust the unit to keep consistency
+replace flag_hefpi = 0 if inlist(varname_my,"w_height_1549","w_bmi_1549","a_bp_sys","a_bp_dial") & flag_dhs == 0
+//drop if flag_hefpi == 0 & flag_dhs == 0
 
 *save data in dta.
 save "${OUT}/quality_control.dta",replace
