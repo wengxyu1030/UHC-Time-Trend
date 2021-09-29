@@ -1,6 +1,9 @@
-////////////////////////////////
-///// Generate Time Series /////
-////////////////////////////////
+//////////////////////////////////
+///// Generate Time Series_2 /////
+/////////////////////////////////
+
+/* This file is to collapse the survey-level indicators data to a final time series dataset. 
+*/
 
 version 14.0
 clear all
@@ -120,41 +123,6 @@ replace value_hefpi = value_hefpi/100 if inlist(varname_my,"w_height_1549","w_bm
 keep varname* binary survey country year iso* value_* region subregion surveyid missing
 save "${OUT}/DHS_Time_Series_QC.dta",replace 
 
-*reshape to have source of data as column
-reshape long value_ ,i(survey country year varname_my) j(source) string
-rename value_ value
-
-*housekeeping
-replace value = . if value == 0 
-
-rename varname_my varname
-
-keep binary survey country year varname source iso3c iso2c value region subregion surveyid missing
-
-*generate standard deviation data with benchmarks (considering limited time-series, the sd only applies to survey-variable level comparing difference between source)
-egen hefpi_sd = sd(value) if inlist(source,"hefpi","my"),by(surveyid varname)
-egen dhs_sd = sd(value) if inlist(source,"dhs","my"),by(surveyid varname)
-egen sd_min = rowmin(hefpi_sd dhs_sd)
-
-*identify variables with time-series. (any source)
-gen n_missing = (value != .)
-bysort country varname source: egen t_n = total(n_missing) //calculate the number data point for each variable by country and source
-gen multi = (t_n > 1) 
-
-bysort country varname: egen temp_multi_any = mean(multi)
-replace multi = (temp_multi_any > 0) //as long as any source contain more them two time stamps, to identify as multi-time stampes for same variable for other sources as well.
-
-*generate standard deviation data among itselfs
-egen my_sd = sd(value) if source == "my",by(country varname) //for each country, calculate the sd along the time. 
-bysort country varname: egen temp_sd_my = mean(my_sd)
-replace my_sd = temp_sd_my
-replace my_sd = . if multi != 1 //only apply to datapoints where multiple time stamp exists. 
-
-drop temp_* 
-
-*save data in dta and excel (feed to tableau dashboard)
-save "${OUT}/DHS_Time_Series.dta",replace
-export excel "${OUT}/DHS_Time_Series.xlsx",firstrow(var) replace
 
 ***********************************
 ****** Generate the figures *******
