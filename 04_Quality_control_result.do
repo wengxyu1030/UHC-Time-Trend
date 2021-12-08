@@ -1,6 +1,9 @@
 ////////////////////////////////
-///// Generate Time Series /////
+///// Generate Time Series_04 /////
 ////////////////////////////////
+
+/*This file is to consolidate the quality control result (This only applies to DHS, where there's external data source to compare with).
+*/
 
 version 14.0
 clear all
