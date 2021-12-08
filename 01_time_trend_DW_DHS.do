@@ -3,7 +3,6 @@
 /////////////////////////////////
 
 /* This file is to calculate the indicators by mircordata
-(!This is an example for Inter-DHS-Recode-VII-Nov2021, please expand to other folders)
 */
 
 version 14.0

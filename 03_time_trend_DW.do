@@ -25,10 +25,10 @@ macro drop _all
 if "`c(username)'" == "sunyining" local pc = 0 
 if "`c(username)'" == "xweng"     local pc = 1
 if `pc' == 0 global root "/Users/sunyining/OneDrive/MEASURE UHC DATA"
-if `pc' == 1 global root "C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA"
+if `pc' == 1 global root "C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA - Sven Neelsen's files"
 
 * Define path for data sources
-global SOURCE "${root}/STATA/DATA/SC"
+global SOURCE "${root}/STATA/DATA/SCADePT READY/MICS"
 
 * Define path for INTERMEDIATE
 global INTER "${SOURCE}/Time_Series/INTER"
@@ -36,14 +36,16 @@ global INTER "${SOURCE}/Time_Series/INTER"
 * Define path for output data
 global OUT "${SOURCE}/Time_Series/FINAL"
 
-* Define path for external data
-global EXTERNAL "${root}/STATA/DO/SC/UHC-Time-Trend/external"
+* Define path for external data 
+global EXTERNAL "${root}/STATA/DO/SC/UHC-Time-Trend/UHC-Time-Trend/external"
 
 *******************************************
 *** Generate Quality Control Indicators ***
 *******************************************
 
+*combine both DHS and MICS time-series data. 
 use "${OUT}/DHS_Time_Series_QC.dta",replace 
+append using  "${OUT}/MICS_Time_Series_QC.dta" 
 
 *reshape to have source of data as column
 reshape long value_ ,i(survey country year varname_my) j(source) string
@@ -76,6 +78,9 @@ replace my_sd = temp_sd_my
 replace my_sd = . if multi != 1 //only apply to datapoints where multiple time stamp exists. 
 
 drop temp_* 
+
+*generate quality control indicator required by Sven (Don't average the standard deviation, but to identify the outliers -> Difference divide by year -> Maximum annualized point change between the close points between each other -> Show the time-series. )
+//! please work on this when you have the previous 01* and 02* code run smoothly
 
 *save data in dta and excel (feed to tableau dashboard)
 save "${OUT}/DHS_Time_Series.dta",replace
