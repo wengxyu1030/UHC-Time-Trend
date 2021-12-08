@@ -58,7 +58,7 @@ save "${EXTERNAL}/iso3c_region.dta",replace
 
 *consolidate the microdata produced indicators
 cd "${INTER}"	
-fs  *.dta
+fs  *DHS.dta
 local firstfile: word 1 of `r(files)'
 use `firstfile', clear
 foreach f in `r(files)' {

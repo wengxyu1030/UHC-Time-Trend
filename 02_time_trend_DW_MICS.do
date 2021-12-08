@@ -36,7 +36,7 @@ global INTER "${SOURCE}/Time_Series/INTER"
 * Define path for output data
 global OUT "${SOURCE}/Time_Series/FINAL"
 
-* Define path for external data //!editing here
+* Define path for external data 
 global EXTERNAL "${root}/STATA/DO/SC/UHC-Time-Trend/UHC-Time-Trend/external"
 
 
@@ -59,7 +59,7 @@ save "${EXTERNAL}/iso3c_region.dta",replace
 
 *consolidate the microdata produced indicators
 cd "${INTER}"	
-fs  *.dta
+fs  *MICS.dta
 local firstfile: word 1 of `r(files)'
 use `firstfile', clear
 foreach f in `r(files)' {
@@ -136,7 +136,7 @@ rename varname_my varname
 keep binary survey country year varname source iso3c iso2c value region subregion missing surveyid //g_value
 
 *save data in dta and excel (feed to tableau dashboard)
-save "${OUT}/MICS_Time_Series.dta",replace
+save "${OUT}/MICS_Time_Series_QC.dta",replace
 
 ***********************************
 ****** Generate the figures *******
