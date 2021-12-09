@@ -40,7 +40,9 @@ global OUT "${SOURCE}/Time_Series/FINAL"
 *** Combine the Microdata**
 ***************************
 //ssc install fs
-global DATA "${SOURCE}/MICS-Oct2021" //this directory is temporary for monitor use, later to finalize !please refine here
+
+foreach subfolder in MICS2-Oct2021 MICS3-Oct2021 MICS4-Oct2021 MICS5-Oct2021 MICS6-Oct2021 {
+global DATA "${SOURCE}/`subfolder'" 
 cd "${DATA}"
 fs  *.dta
 local firstfile: word 1 of `r(files)'
@@ -92,7 +94,7 @@ egen pop_w_sampleweight = wtmean(w_sampleweight), weight(w_sampleweight)
 	
 	***for variables generated from 9_child_anthropometrics
 	foreach var of var c_underweight c_stunted c_height c_underweight_sev ///
-	c_wasted c_wasted_sev c_weight c_hfa c_wfa c_wfh c_stunted_sev c_stuund {
+	c_wasted c_wasted_sev c_weight c_hfa c_wfa c_wfh c_stunted_sev c_stu_was c_stu_was_sev {
     egen pop_`var' = wtmean(`var'),weight(c_sampleweight)
     }
 	
@@ -115,4 +117,5 @@ keep if _n == 1
 
 save "${INTER}/Indicator_`survey'_MICS", replace  
 
+}
 }
