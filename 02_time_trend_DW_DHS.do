@@ -28,7 +28,7 @@ if `pc' == 0 global root "/Users/sunyining/OneDrive/MEASURE UHC DATA"
 if `pc' == 1 global root "C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA - Sven Neelsen's files"
 
 * Define path for data sources
-global SOURCE "${root}/STATA/DATA/SCADePT READY/MICS"
+global SOURCE "${root}/STATA/DATA/SC/ADePT READY/MICS"
 
 * Define path for INTERMEDIATE
 global INTER "${SOURCE}/Time_Series/INTER"
@@ -58,7 +58,7 @@ save "${EXTERNAL}/iso3c_region.dta",replace
 
 *consolidate the microdata produced indicators
 cd "${INTER}"	
-fs  *DHS.dta
+fs  Indicator_DHS*.dta
 local firstfile: word 1 of `r(files)'
 use `firstfile', clear
 foreach f in `r(files)' {
@@ -78,6 +78,19 @@ replace iso3c = "COD"  if country == "Congo"
 
 replace iso3c = "SWZ" if country == "Eswatini" //add the missing iso code in the microdata. 
 replace iso2c = "SZ" if country == "Eswatini" //add the missing iso code in the microdata. 
+
+replace iso2c = "BF"  if country == "BurkinaFaso " 
+replace iso3c = "BFA"  if country == "BurkinaFaso "
+replace iso2c = "CD"  if country == "Congodr" 
+replace iso3c = "COD"  if country == "Congodr"
+replace iso2c = "DO"  if country == "DominicanRepublic"
+replace iso3c = "DOM"  if country == "DominicanRepublic"
+replace iso2c = "SL"  if country == "SierraLeone" 
+replace iso3c = "SLE"  if country == "SierraLeone"
+replace iso2c = "LK"  if country == "SriLanka" 
+replace iso3c = "LKA"  if country == "SriLanka"
+replace iso2c = "TL"  if country == "TimorLeste"
+replace iso3c = "TLS"  if country == "TimorLeste"
 
 merge m:1 iso3c using "${EXTERNAL}/iso3c_region.dta"
 

@@ -28,7 +28,7 @@ if `pc' == 0 global root "/Users/sunyining/OneDrive/MEASURE UHC DATA"
 if `pc' == 1 global root "C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA - Sven Neelsen's files"
 
 * Define path for data sources
-global SOURCE "${root}/STATA/DATA/SCADePT READY/MICS"
+global SOURCE "${root}/STATA/DATA/SC/ADePT READY/MICS"
 
 * Define path for INTERMEDIATE
 global INTER "${SOURCE}/Time_Series/INTER"
@@ -37,7 +37,7 @@ global INTER "${SOURCE}/Time_Series/INTER"
 global OUT "${SOURCE}/Time_Series/FINAL"
 
 * Define path for external data 
-global EXTERNAL "${root}/STATA/DO/SC/UHC-Time-Trend/UHC-Time-Trend/external"
+global EXTERNAL "${root}/STATA/DO/SC/UHC-Time-Trend/external"
 
 
 ***********************************
@@ -59,7 +59,7 @@ save "${EXTERNAL}/iso3c_region.dta",replace
 
 *consolidate the microdata produced indicators
 cd "${INTER}"	
-fs  *MICS.dta
+fs  Indicator_MICS*
 local firstfile: word 1 of `r(files)'
 use `firstfile', clear
 foreach f in `r(files)' {

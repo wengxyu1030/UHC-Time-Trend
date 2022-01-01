@@ -41,7 +41,7 @@ global OUT "${SOURCE}/Time_Series/FINAL"
 ***************************
 //ssc install fs
 
-foreach subfolder in MICS2-Oct2021 MICS3-Oct2021 MICS4-Oct2021 MICS5-Oct2021 MICS6-Oct2021 {
+foreach subfolder in MICS2-Dec2021 MICS3-Dec2021 MICS4-Dec2021 MICS5-Dec2021 MICS6-Oct2021 {
 global DATA "${SOURCE}/`subfolder'" 
 cd "${DATA}"
 fs  *.dta

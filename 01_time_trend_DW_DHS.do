@@ -21,7 +21,6 @@ macro drop _all
 
 //NOTE FOR WINDOWS USERS : use "/" instead of "\" in your paths
 
-
 * Define root depend on the stata user. 
 if "`c(username)'" == "sunyining" local pc = 0
 if "`c(username)'" == "xweng"     local pc = 1
@@ -41,7 +40,7 @@ global OUT "${SOURCE}/Time_Series/FINAL"
 *** Combine the Microdata**
 ***************************
 //ssc install fs
-foreach subfolder in DHS-Recode-I-Nov2021 DHS-Recode-II-Nov2021 DHS-Recode-III-Nov2021 DHS-Recode-IV-Nov2021 DHS-Recode-V-Nov2021 DHS-Recode-VI-Nov2021 DHS-Recode-VII-Nov2021 {
+foreach subfolder in DHS-Recode-I-Nov2021 DHS-Recode-II-Nov2021 DHS-Recode-III-Nov2021 DHS-Recode-IV-Dec2021 DHS-Recode-V-Dec2021 DHS-Recode-VI-Dec2021 DHS-Recode-VII-Dec2021 {
 
 global DATA "${SOURCE}/`subfolder'" 
 cd "${DATA}"
