@@ -79,8 +79,8 @@ replace iso3c = "COD"  if country == "Congo"
 replace iso3c = "SWZ" if country == "Eswatini" //add the missing iso code in the microdata. 
 replace iso2c = "SZ" if country == "Eswatini" //add the missing iso code in the microdata. 
 
-replace iso2c = "BF"  if country == "BurkinaFaso " 
-replace iso3c = "BFA"  if country == "BurkinaFaso "
+replace iso2c = "BF"  if country == "BurkinaFaso" 
+replace iso3c = "BFA"  if country == "BurkinaFaso"
 replace iso2c = "CD"  if country == "Congodr" 
 replace iso3c = "COD"  if country == "Congodr"
 replace iso2c = "DO"  if country == "DominicanRepublic"
