@@ -37,7 +37,7 @@ global INTER "${SOURCE}/Time_Series/INTER"
 global OUT "${SOURCE}/Time_Series/FINAL"
 
 * Define path for external data 
-global EXTERNAL "${root}/STATA/DO/SC/UHC-Time-Trend/external"
+global EXTERNAL "${root}/STATA/DO/SC/UHC-Time-Trend/UHC-Time-Trend/external"
 
 
 ***********************************

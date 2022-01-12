@@ -1,8 +1,8 @@
 
-global root "C:\Users\wb500886\WBG\Sven Neelsen - World Bank\MEASURE UHC DATA"
+global root "C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA - Sven Neelsen's files"
 
 * Define path for data sources
-global SOURCE "${root}/RAW DATA/Recode VI"
+global SOURCE "${root}/STATA/DO/SC/UHC-Time-Trend/UHC-Time-Trend/"
 
 * Define path for output data
 global OUT "${root}/STATA/DATA/SC/FINAL"

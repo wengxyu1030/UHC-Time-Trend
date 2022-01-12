@@ -115,7 +115,7 @@ egen pop_w_sampleweight = wtmean(w_sampleweight), weight(w_sampleweight)
 keep pop_* survey country iso3c iso2c year
 keep if _n == 1
 
-save "${INTER}/Indicator_`survey'_MICS", replace  
+save "${INTER}/Indicator_`survey'", replace  
 
 }
 }
