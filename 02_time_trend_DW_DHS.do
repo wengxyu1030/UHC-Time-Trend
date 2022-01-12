@@ -58,7 +58,7 @@ save "${EXTERNAL}/iso3c_region.dta",replace
 
 *consolidate the microdata produced indicators
 cd "${INTER}"	
-fs  Indicator_DHS*.dta
+fs  Indicator_AIS*.dta Indicator_MIS*.dta Indicator_DHS*.dta
 local firstfile: word 1 of `r(files)'
 use `firstfile', clear
 foreach f in `r(files)' {
@@ -79,8 +79,8 @@ replace iso3c = "COD"  if country == "Congo"
 replace iso3c = "SWZ" if country == "Eswatini" //add the missing iso code in the microdata. 
 replace iso2c = "SZ" if country == "Eswatini" //add the missing iso code in the microdata. 
 
-replace iso2c = "BF"  if country == "BurkinaFaso " 
-replace iso3c = "BFA"  if country == "BurkinaFaso "
+replace iso2c = "BF"  if country == "BurkinaFaso" 
+replace iso3c = "BFA"  if country == "BurkinaFaso"
 replace iso2c = "CD"  if country == "Congodr" 
 replace iso3c = "COD"  if country == "Congodr"
 replace iso2c = "DO"  if country == "DominicanRepublic"
@@ -98,7 +98,10 @@ tab country if _merge == 1 //please check if there's not-matched country
 drop _merge
 
 //HAVE THE COLUMN SEPARATE MISSING AS MISSING_URBAN MISSING_RURAL (need rural/urban level information)
-gen surveyid = iso2c+year+"DHS"
+
+gen surveyid = iso2c+year+"DHS" if  strmatch(survey,"*DHS*")
+replace surveyid = iso2c+year+"AIS" if  strmatch(survey,"*AIS*")
+replace surveyid = iso2c+year+"MIS" if  strmatch(survey,"*MIS*")
 
 tab country if mi(iso2c)
 tab country if mi(iso3c)
