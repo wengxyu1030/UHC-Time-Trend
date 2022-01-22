@@ -119,7 +119,7 @@ replace value_hefpi = value_hefpi/100 if inlist(varname_my,"w_height_1549","w_bm
 
 *save the intermediate output for quality checking use. 
 keep varname* binary survey country year iso* value_* region subregion missing surveyid
-save "${OUT}/MICS_Time_Series_QC.dta",replace 
+save "${OUT}/Indicator/MICS_Time_Series_QC.dta",replace 
 
 *reshape to have source of data as column
 reshape long value_ ,i(survey country year varname_my) j(source) string
