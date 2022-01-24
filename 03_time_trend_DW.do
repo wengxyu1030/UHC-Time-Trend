@@ -45,7 +45,19 @@ global EXTERNAL "${root}/STATA/DO/SC/UHC-Time-Trend/UHC-Time-Trend/external"
 
 *combine both DHS and MICS time-series data. 
 use "${OUT}/DHS_Time_Series_QC.dta",replace 
-append using  "${OUT}/MICS_Time_Series_QC.dta" 
+append using  "${OUT}/Indicator_MICS_Time_Series_QC.dta" 
+
+*identify abnormal data
+destring(value_my value_hefpi),replace
+gen gap_hefpi = (value_my-value_hefpi)/value_hefpi*100
+replace gap_hefpi = value_my-value_hefpi if value_hefpi>20
+
+gen flag_hefpi = ((gap_hefpi > 10 | gap_hefpi < -10 )& value_hefpi<=20) | ((gap_hefpi>2|gap_hefpi<-2)&value_hefpi>20)
+tab varname_my if flag_hefpi == 1
+br varname_my value* flag_hefpi if flag_hefpi == 1
+
+*identify missing data points 
+gen gap_mis = 1 if missing(value_my)& !missing(value_hefpi)
 
 *reshape to have source of data as column
 reshape long value_ ,i(survey country year varname_my) j(source) string
@@ -56,7 +68,7 @@ replace value = . if value == 0
 
 rename varname_my varname
 
-keep binary survey country year varname source iso3c iso2c value region subregion surveyid missing
+keep binary survey country year varname source iso3c iso2c value region subregion surveyid missing gap_mis gap_hefpi
 
 *generate standard deviation data with benchmarks (considering limited time-series, the sd only applies to survey-variable level comparing difference between source)
 egen hefpi_sd = sd(value) if inlist(source,"hefpi","my"),by(surveyid varname)
