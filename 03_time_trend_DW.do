@@ -57,7 +57,7 @@ tab varname_my if flag_hefpi == 1
 br varname_my value* flag_hefpi if flag_hefpi == 1
 
 *identify missing data points 
-gen gap_mis = 1 if missing(value_my)& !missing(value_hefpi)
+gen gap_mis = cond(missing(value_my)& !missing(value_hefpi),1,0)
 
 *reshape to have source of data as column
 reshape long value_ ,i(survey country year varname_my) j(source) string
@@ -68,7 +68,7 @@ replace value = . if value == 0
 
 rename varname_my varname
 
-keep binary survey country year varname source iso3c iso2c value region subregion surveyid missing gap_mis gap_hefpi
+keep binary survey country year varname source iso3c iso2c value region subregion surveyid missing gap_mis gap_hefpi flag_hefpi
 
 *generate standard deviation data with benchmarks (considering limited time-series, the sd only applies to survey-variable level comparing difference between source)
 egen hefpi_sd = sd(value) if inlist(source,"hefpi","my"),by(surveyid varname)
