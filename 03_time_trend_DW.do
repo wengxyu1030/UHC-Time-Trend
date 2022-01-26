@@ -53,6 +53,8 @@ gen gap_hefpi = (value_my-value_hefpi)/value_hefpi*100
 replace gap_hefpi = value_my-value_hefpi if value_hefpi>20
 
 gen flag_hefpi = ((gap_hefpi > 10 | gap_hefpi < -10 )& value_hefpi<=20) | ((gap_hefpi>2|gap_hefpi<-2)&value_hefpi>20)
+replace flag_hefpi=0 if value_my==. & value_hefpi==.
+replace flag_hefpi=2 if value_my!=. & value_hefpi==.
 tab varname_my if flag_hefpi == 1
 br varname_my value* flag_hefpi if flag_hefpi == 1
 
