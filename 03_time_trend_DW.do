@@ -90,8 +90,12 @@ egen my_sd = sd(value) if source == "my",by(country varname) //for each country,
 bysort country varname: egen temp_sd_my = mean(my_sd)
 replace my_sd = temp_sd_my
 replace my_sd = . if multi != 1 //only apply to datapoints where multiple time stamp exists. 
-
 drop temp_* 
+
+*generate annualized growth rate among itselfs
+destring year, replace
+sort year
+bysort country varname: gen growth_rate = (value - value[_n-1])/(year - year[_n-1]) if source == "my"
 
 *generate quality control indicator required by Sven (Don't average the standard deviation, but to identify the outliers -> Difference divide by year -> Maximum annualized point change between the close points between each other -> Show the time-series. )
 //! please work on this when you have the previous 01* and 02* code run smoothly
