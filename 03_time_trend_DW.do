@@ -98,6 +98,7 @@ sort year
 bysort country varname: gen growth_rate = (value - value[_n-1])/(year - year[_n-1]) if source == "my"
 bysort country varname: egen temp_growth_rate = mean(growth_rate)
 replace growth_rate = temp_growth_rate
+replace growth_rate = . if multi != 1 
 drop temp_* 
 
 *generate quality control indicator required by Sven (Don't average the standard deviation, but to identify the outliers -> Difference divide by year -> Maximum annualized point change between the close points between each other -> Show the time-series. )
