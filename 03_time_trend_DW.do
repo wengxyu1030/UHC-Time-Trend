@@ -95,15 +95,16 @@ drop temp_*
 *generate quality control indicator required by Sven (Don't average the standard deviation, but to identify the outliers -> Difference divide by year -> Maximum annualized point change between the close points between each other -> Show the time-series. )
 destring year, replace
 sort country varname source year
-bysort country varname source: gen growth_rate = (value - value[_n-1])/(year - year[_n-1]) if source == "my"
+bysort country varname source: gen growth_rate_my = (value - value[_n-1])/(year - year[_n-1]) if source == "my"
 
-egen temp_gr_abs = abs(growth_rate) //take the absolute value in case there's big negative number
+gen temp_gr_abs = abs(growth_rate) //take the absolute value in case there's big negative number
 bysort country varname: egen temp_growth_rate = max(temp_gr_abs)
 
-replace growth_rate = temp_growth_rate
-replace growth_rate = . if multi != 1 
+replace growth_rate_my = temp_growth_rate
+replace growth_rate_my = . if multi != 1 
 drop temp_* 
 
+br country varname source growth_rate_my if multi == 1
 
 *save data in dta and excel (feed to tableau dashboard)
 save "${OUT}/DHS_Time_Series.dta",replace
