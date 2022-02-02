@@ -28,7 +28,7 @@ if `pc' == 0 global root "/Users/sunyining/OneDrive/MEASURE UHC DATA"
 if `pc' == 1 global root "C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA - Sven Neelsen's files"
 
 * Define path for data sources
-global SOURCE "${root}/STATA/DATA/SCADePT READY/MICS"
+global SOURCE "${root}/STATA/DATA/SC/ADePT READY/MICS"
 
 * Define path for INTERMEDIATE
 global INTER "${SOURCE}/Time_Series/INTER"
@@ -45,7 +45,7 @@ global EXTERNAL "${root}/STATA/DO/SC/UHC-Time-Trend/UHC-Time-Trend/external"
 
 *combine both DHS and MICS time-series data. 
 use "${OUT}/DHS_Time_Series_QC.dta",replace 
-append using  "${OUT}/Indicator_MICS_Time_Series_QC.dta" 
+append using  "${OUT}/MICS_Time_Series_QC.dta" 
 
 *identify abnormal data
 destring(value_my value_hefpi),replace
@@ -92,17 +92,18 @@ replace my_sd = temp_sd_my
 replace my_sd = . if multi != 1 //only apply to datapoints where multiple time stamp exists. 
 drop temp_* 
 
-*generate annualized growth rate among itselfs
+*generate quality control indicator required by Sven (Don't average the standard deviation, but to identify the outliers -> Difference divide by year -> Maximum annualized point change between the close points between each other -> Show the time-series. )
 destring year, replace
-sort year
-bysort country varname: gen growth_rate = (value - value[_n-1])/(year - year[_n-1]) if source == "my"
-bysort country varname: egen temp_growth_rate = mean(growth_rate)
+sort country varname source year
+bysort country varname source: gen growth_rate = (value - value[_n-1])/(year - year[_n-1]) if source == "my"
+
+egen temp_gr_abs = abs(growth_rate) //take the absolute value in case there's big negative number
+bysort country varname: egen temp_growth_rate = max(temp_gr_abs)
+
 replace growth_rate = temp_growth_rate
 replace growth_rate = . if multi != 1 
 drop temp_* 
 
-*generate quality control indicator required by Sven (Don't average the standard deviation, but to identify the outliers -> Difference divide by year -> Maximum annualized point change between the close points between each other -> Show the time-series. )
-//! please work on this when you have the previous 01* and 02* code run smoothly
 
 *save data in dta and excel (feed to tableau dashboard)
 save "${OUT}/DHS_Time_Series.dta",replace
