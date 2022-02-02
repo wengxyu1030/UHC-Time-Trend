@@ -119,24 +119,7 @@ replace value_hefpi = value_hefpi/100 if inlist(varname_my,"w_height_1549","w_bm
 
 *save the intermediate output for quality checking use. 
 keep varname* binary survey country year iso* value_* region subregion missing surveyid
-save "${OUT}/Indicator/MICS_Time_Series_QC.dta",replace 
-
-*reshape to have source of data as column
-reshape long value_ ,i(survey country year varname_my) j(source) string
-rename value_ value
-
-replace value = . if value == 0 
-
-
-*housekeeping
-drop if value == . & source != "my"
-
-rename varname_my varname
-
-keep binary survey country year varname source iso3c iso2c value region subregion missing surveyid //g_value
-
-*save data in dta and excel (feed to tableau dashboard)
-save "${OUT}/MICS_Time_Series_QC.dta",replace
+save "${OUT}/MICS_Time_Series_QC.dta",replace 
 
 ***********************************
 ****** Generate the figures *******
