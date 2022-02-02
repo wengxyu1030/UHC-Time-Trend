@@ -27,6 +27,9 @@ if "`c(username)'" == "xweng"     local pc = 1
 if `pc' == 0 global root "/Users/sunyining/OneDrive/MEASURE UHC DATA"
 if `pc' == 1 global root "C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA - Sven Neelsen's files"
 
+* Define path for dofiles
+global DO "${root}/STATA/DO/SC/UHC-Time-Trend/UHC-Time-Trend"
+
 * Define path for data sources
 global SOURCE "${root}/STATA/DATA/SC/ADePT READY/MICS"
 
@@ -107,5 +110,5 @@ drop temp_*
 br country varname source growth_rate_my if multi == 1
 
 *save data in dta and excel (feed to tableau dashboard)
-save "${OUT}/DHS_Time_Series.dta",replace
-export excel "${OUT}/DHS_Time_Series.xlsx",firstrow(var) replace
+save "${OUT}/Time_Series.dta",replace
+export excel "${OUT}/Time_Series.xlsx",firstrow(var) replace
