@@ -48,24 +48,9 @@ use "${OUT}/DHS_Time_Series_QC.dta",replace
 append using  "${OUT}/MICS_Time_Series_QC.dta" 
 
 *rename for consistency 
-replace country = "BosniaHerzegovina" if country == "Bosnia and Herzegovina"
-replace country = "BurkinaFaso" if country == "Burkina Faso"
-replace country = "CentralAfricanRepublic" if country == "Central African Republic"
-replace country = "CostaRica" if country == "Costa Rica"
 replace country = "CotedIvoire" if country == "Cote d'Ivoire"
-replace country = "DominicanRepublic" if country == "Dominican Republic"
-replace country = "ElSalvador" if country == "El Salvador"
-replace country = "EquatorialGuinea" if country == "Equatorial Guinea"
-replace country = "KyrgyzRepublic" if country == "Kyrgyz Republic"
-replace country = "LaoPDR" if country == "Lao PDR"
 replace country = "SaoTomePrincipe" if country == "Sao Tome and Principe"
-replace country = "SierraLeone" if country == "Sierra Leone"
-replace country = "SouthAfrica" if country == "South Africa"
-replace country = "SouthSudan" if country == "South Sudan"
-replace country = "SyrianArabRepublic" if country == "Syrian Arab Republic"
-replace country = "TheGambia" if country == "The Gambia"
-replace country = "TrinidadandTobago" if country == "Trinidad and Tobago"
-replace country = "WestBankGaza" if country == "West Bank and Gaza"
+replace country = subinstr(country," ","",.)
 replace country = "Congodr" if iso2c == "CD" //aligning the naming of Congo,Congodr and Dem. Rep. Congo
 
 *identify abnormal data
