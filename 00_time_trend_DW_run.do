@@ -2,6 +2,7 @@
 ///// Run Time Series Do Files /////
 ///////////////////////////////////
 
+/*this do file is to run all the do files that generates the time series */
 
 ******************************
 *** Define main root paths ***
@@ -32,8 +33,10 @@ global OUT "${SOURCE}/Time_Series/FINAL"
 *************************************
 
 do "${DO}/01_time_trend_DW_DHS.do"
-do "${DO}/01_time_trend_DW_MICS.do"
 do "${DO}/02_time_trend_DW_DHS.do"
+
+do "${DO}/01_time_trend_DW_MICS.do"
 do "${DO}/02_time_trend_DW_MICS.do"
+
 do "${DO}/03_time_trend_DW.do"
 
