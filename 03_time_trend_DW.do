@@ -50,6 +50,12 @@ global EXTERNAL "${root}/STATA/DO/SC/UHC-Time-Trend/UHC-Time-Trend/external"
 use "${OUT}/DHS_Time_Series_QC.dta",replace 
 append using  "${OUT}/MICS_Time_Series_QC.dta" 
 
+*rename for consistency 
+replace country = "CotedIvoire" if country == "Cote d'Ivoire"
+replace country = "SaoTomePrincipe" if country == "Sao Tome and Principe"
+replace country = subinstr(country," ","",.)
+replace country = "Congodr" if iso2c == "CD" //aligning the naming of Congo,Congodr and Dem. Rep. Congo
+
 *identify abnormal data
 destring(value_my value_hefpi),replace
 gen gap_hefpi = (value_my-value_hefpi)/value_hefpi*100
