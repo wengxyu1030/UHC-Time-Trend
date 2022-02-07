@@ -65,7 +65,7 @@ use "${DATA}/`survey'",clear
     }
 	
 	***for variables generated from 4_sexual_health 5_woman_anthropometrics
-	foreach var of var w_CPR w_unmet_fp	w_need_fp w_metany_fp	w_metmod_fp w_metany_fp_q  w_bmi_1549 w_height_1549 w_obese_1549 w_overweight_1549 w_married {
+	foreach var of var w_CPR w_unmet_fp	w_need_fp w_metany_fp	w_metmod_fp w_metany_fp_q  w_bmi_1549 w_height_1549 w_obese_1549 w_overweight_1549 w_married w_papsmear w_mammogram {
 	egen pop_`var' = wtmean(`var'), weight(w_sampleweight)
 	}
 	
