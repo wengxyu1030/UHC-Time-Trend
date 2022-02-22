@@ -119,6 +119,37 @@ drop temp_*
 
 br country varname source growth_rate_my if multi == 1
 
+*find the outlier for the growth rate and standard deviation when it's time series
+
+foreach var in growth_rate_my my_sd {
+	//find the IQR and define the outliers
+    egen iqr_`var' = iqr(`var') if source == "my",by(varname)
+	egen qrt_`var' = pctile(`var') if source == "my",p(75) by(varname)  //3rd quartile
+    replace iqr_`var' = qrt_`var'  +1.5*iqr_`var' if source == "my"
+    gen outlier_`var' = (`var' > iqr_`var') if source == "my"
+    drop iqr_`var'
+}
+
+gen outlier_all = (outlier_growth_rate_my == 1 & outlier_my_sd == 1) if source == "my" //define the value are outlier when both standard deviation and growth rate are outliers
+
+foreach var of varlist outlier* {
+	//apply the same value to all the country-indicator level for different benchmark source (easier to filter and compare)
+	bysort country varname: egen temp_`var' = max(`var')
+	replace `var' = temp_`var'
+	drop temp*
+	replace `var' = . if multi != 1
+}
+
+br country varname growth_rate_my my_sd source outlier*
+tab varname_focus outlier_all if source == "my"
+
+*specify the quality checking scope:
+gen varname_focus = 0
+replace varname_focus = 1 if inlist(varname,"c_anc","c_anc_any","c_anc_ear","c_anc_eff","c_facdel","c_hospdel","c_sba","c_sba_q","c_pnc_any")
+replace varname_focus = 1 if inlist(varname,"w_CPR","w_unmet_fp","w_metmod_fp","w_condom_conc","c_fullimm","c_measles","c_treatARI","c_treatdiarrhea","c_underweight")
+replace varname_focus = 1 if inlist(varname,"c_stunted","c_wasted",	"c_ITN","a_hiv","c_vaczero","c_fevertreat","c_diarrhea_pro")
+
+
 *save data in dta and excel (feed to tableau dashboard)
 save "${OUT}/Time_Series.dta",replace
 export excel "${OUT}/Time_Series.xlsx",firstrow(var) replace
