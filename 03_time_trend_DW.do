@@ -56,7 +56,7 @@ replace country = "SaoTomePrincipe" if country == "Sao Tome and Principe"
 replace country = subinstr(country," ","",.)
 replace country = "Congodr" if iso2c == "CD" //aligning the naming of Congo,Congodr and Dem. Rep. Congo
 
-*identify abnormal data
+*identify abnormal data (the thresholds to be decided)
 destring(value_my value_hefpi),replace
 gen gap_hefpi = (value_my-value_hefpi)/value_hefpi*100
 replace gap_hefpi = value_my-value_hefpi if value_hefpi>20
