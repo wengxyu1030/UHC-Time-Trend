@@ -100,7 +100,7 @@ split survey,p(-) l(1)
 replace survey = survey1
 drop survey1
 
-keep binary survey country year varname source iso3c iso2c value region subregion surveyid missing gap_mis gap_hefpi flag_hefpi
+keep binary survey country year varname source iso3c iso2c value region subregion surveyid missing gap_mis gap_hefpi flag_hefpi flag_hefpi_March
 
 *generate standard deviation data with benchmarks (considering limited time-series, the sd only applies to survey-variable level comparing difference between source)
 egen hefpi_sd = sd(value) if inlist(source,"hefpi","my"),by(surveyid varname)
