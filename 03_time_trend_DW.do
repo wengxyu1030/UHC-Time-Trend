@@ -67,6 +67,23 @@ replace flag_hefpi=2 if value_my!=. & value_hefpi==.
 tab varname_my if flag_hefpi == 1
 br varname_my value* flag_hefpi if flag_hefpi == 1
 
+*identify abnormal data (updated threshold per discussion with WB team)
+gen flag_hefpi_March = 0 
+replace flag_hefpi_March = 1 if ((gap_hefpi >20 | gap_hefpi < -20 )& value_hefpi<=5)
+replace flag_hefpi_March = 1 if ((gap_hefpi >15 | gap_hefpi < -15 )& inrange(value_hefpi,5,10))
+replace flag_hefpi_March = 1 if ((gap_hefpi >12 | gap_hefpi < -12 )& inrange(value_hefpi,10,20))
+replace flag_hefpi_March = 1 if ((gap_hefpi >10 | gap_hefpi < -10 )& inrange(value_hefpi,20,40))
+replace flag_hefpi_March = 1 if ((gap_hefpi >8 | gap_hefpi < -8 )& inrange(value_hefpi,40,50))
+replace flag_hefpi_March = 1 if ((gap_hefpi >7 | gap_hefpi < -7 )& inrange(value_hefpi,50,60))
+replace flag_hefpi_March = 1 if ((gap_hefpi >6 | gap_hefpi < -6 )& inrange(value_hefpi,60,70))
+replace flag_hefpi_March = 1 if ((gap_hefpi >5 | gap_hefpi < -5 )& inrange(value_hefpi,70,80))
+replace flag_hefpi_March = 1 if ((gap_hefpi >4 | gap_hefpi < -4 )& inrange(value_hefpi,80,100))
+
+replace flag_hefpi_March=0 if value==. & value_hefpi==.
+replace flag_hefpi_March=2 if value!=. & value_hefpi==.
+tab varname_my if flag_hefpi_March == 1
+br varname_my value* flag_hefpi_March if flag_hefpi_March == 1
+
 *identify missing data points 
 gen gap_mis = cond(missing(value_my)& !missing(value_hefpi),1,0)
 
