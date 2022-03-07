@@ -61,31 +61,28 @@ destring(value_my value_hefpi),replace
 gen gap_hefpi = (value_my-value_hefpi)/value_hefpi*100
 replace gap_hefpi = value_my-value_hefpi if value_hefpi>20
 
-gen flag_hefpi = ((gap_hefpi > 10 | gap_hefpi < -10 )& value_hefpi<=20) | ((gap_hefpi>2|gap_hefpi<-2)&value_hefpi>20)
-replace flag_hefpi=0 if value_my==. & value_hefpi==.
-replace flag_hefpi=2 if value_my!=. & value_hefpi==.
-tab varname_my if flag_hefpi == 1
-br varname_my value* flag_hefpi if flag_hefpi == 1
+/*
+gen flag_hefpi = ((gap_hefpi > 10 | gap_hefpi < -10 )& value_hefpi<=20) | ((gap_hefpi>2|gap_hefpi<-2)&value_hefpi>20) //the previous definition of flaged datapoints. 
+*/
 
 *identify abnormal data (updated threshold per discussion with WB team)
-gen flag_hefpi_March = 0 
-replace flag_hefpi_March = 1 if ((gap_hefpi >20 | gap_hefpi < -20 )& value_hefpi<=5)
-replace flag_hefpi_March = 1 if ((gap_hefpi >15 | gap_hefpi < -15 )& inrange(value_hefpi,5,10))
-replace flag_hefpi_March = 1 if ((gap_hefpi >12 | gap_hefpi < -12 )& inrange(value_hefpi,10,20))
-replace flag_hefpi_March = 1 if ((gap_hefpi >10 | gap_hefpi < -10 )& inrange(value_hefpi,20,40))
-replace flag_hefpi_March = 1 if ((gap_hefpi >8 | gap_hefpi < -8 )& inrange(value_hefpi,40,50))
-replace flag_hefpi_March = 1 if ((gap_hefpi >7 | gap_hefpi < -7 )& inrange(value_hefpi,50,60))
-replace flag_hefpi_March = 1 if ((gap_hefpi >6 | gap_hefpi < -6 )& inrange(value_hefpi,60,70))
-replace flag_hefpi_March = 1 if ((gap_hefpi >5 | gap_hefpi < -5 )& inrange(value_hefpi,70,80))
-replace flag_hefpi_March = 1 if ((gap_hefpi >4 | gap_hefpi < -4 )& inrange(value_hefpi,80,100))
+gen flag_hefpi = 0 
+replace flag_hefpi = 1 if ((gap_hefpi >20 | gap_hefpi < -20 )& value_hefpi<=5)
+replace flag_hefpi = 1 if ((gap_hefpi >15 | gap_hefpi < -15 )& inrange(value_hefpi,5,10))
+replace flag_hefpi = 1 if ((gap_hefpi >12 | gap_hefpi < -12 )& inrange(value_hefpi,10,20))
+replace flag_hefpi = 1 if ((gap_hefpi >10 | gap_hefpi < -10 )& inrange(value_hefpi,20,40))
+replace flag_hefpi = 1 if ((gap_hefpi >8 | gap_hefpi < -8 )& inrange(value_hefpi,40,50))
+replace flag_hefpi = 1 if ((gap_hefpi >7 | gap_hefpi < -7 )& inrange(value_hefpi,50,60))
+replace flag_hefpi = 1 if ((gap_hefpi >6 | gap_hefpi < -6 )& inrange(value_hefpi,60,70))
+replace flag_hefpi = 1 if ((gap_hefpi >5 | gap_hefpi < -5 )& inrange(value_hefpi,70,80))
+replace flag_hefpi = 1 if ((gap_hefpi >4 | gap_hefpi < -4 )& inrange(value_hefpi,80,100))
 
-replace flag_hefpi_March=0 if value==. & value_hefpi==.
-replace flag_hefpi_March=2 if value!=. & value_hefpi==.
-tab varname_my if flag_hefpi_March == 1
-br varname_my value* flag_hefpi_March if flag_hefpi_March == 1
-
-*identify missing data points 
-gen gap_mis = cond(missing(value_my)& !missing(value_hefpi),1,0)
+//codify the falg status
+replace flag_hefpi=1 if value_my==. & value_hefpi!=. //if there's benchmark available while the value is not coded in the template
+replace flag_hefpi=0 if value_my==. & value_hefpi==. //if both of the value and the benchmarks are missing
+replace flag_hefpi=0 if value_my!=. & value_hefpi==. //if the value is not missing while the benchmarks are missing. 
+tab varname_my if flag_hefpi == 1
+br varname_my value* flag_hefpi if flag_hefpi == 1
 
 *reshape to have source of data as column
 reshape long value_ ,i(survey country year varname_my) j(source) string
@@ -100,7 +97,7 @@ split survey,p(-) l(1)
 replace survey = survey1
 drop survey1
 
-keep binary survey country year varname source iso3c iso2c value region subregion surveyid missing gap_mis gap_hefpi flag_hefpi flag_hefpi_March
+keep binary survey country year varname source iso3c iso2c value region subregion surveyid missing gap_hefpi flag_hefpi
 
 *generate standard deviation data with benchmarks (considering limited time-series, the sd only applies to survey-variable level comparing difference between source)
 egen hefpi_sd = sd(value) if inlist(source,"hefpi","my"),by(surveyid varname)
@@ -158,7 +155,6 @@ foreach var of varlist outlier* {
 }
 
 br country varname growth_rate_my my_sd source outlier*
-tab varname_focus outlier_all if source == "my"
 
 *specify the quality checking scope:
 gen varname_focus = 0
@@ -166,6 +162,7 @@ replace varname_focus = 1 if inlist(varname,"c_anc","c_anc_any","c_anc_ear","c_a
 replace varname_focus = 1 if inlist(varname,"w_CPR","w_unmet_fp","w_metmod_fp","w_condom_conc","c_fullimm","c_measles","c_treatARI","c_treatdiarrhea","c_underweight")
 replace varname_focus = 1 if inlist(varname,"c_stunted","c_wasted",	"c_ITN","a_hiv","c_vaczero","c_fevertreat","c_diarrhea_pro")
 
+tab varname_focus outlier_all if source == "my"
 
 *save data in dta and excel (feed to tableau dashboard)
 save "${OUT}/Time_Series.dta",replace
