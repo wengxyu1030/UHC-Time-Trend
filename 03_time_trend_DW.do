@@ -82,7 +82,7 @@ replace flag_hefpi=1 if value_my==. & value_hefpi!=. //if there's benchmark avai
 replace flag_hefpi=0 if value_my==. & value_hefpi==. //if both of the value and the benchmarks are missing
 replace flag_hefpi=0 if value_my!=. & value_hefpi==. //if the value is not missing while the benchmarks are missing. 
 tab varname_my if flag_hefpi == 1
-br varname_my value* flag_hefpi if flag_hefpi == 1
+//br varname_my value* flag_hefpi if flag_hefpi == 1
 
 *reshape to have source of data as column
 reshape long value_ ,i(survey country year varname_my) j(source) string
@@ -122,29 +122,34 @@ drop temp_*
 *generate quality control indicator required by Sven (Don't average the standard deviation, but to identify the outliers -> Difference divide by year -> Maximum annualized point change between the close points between each other -> Show the time-series. )
 destring year, replace
 sort country varname source year
-bysort country varname source: gen growth_rate_my = (value - value[_n-1])/(year - year[_n-1]) if source == "my"
+bysort country varname source: gen my_gr = (value - value[_n-1])/(year - year[_n-1]) if source == "my"
 
-gen temp_gr_abs = abs(growth_rate) //take the absolute value in case there's big negative number
+gen temp_gr_abs = abs(my_gr) //take the absolute value in case there's big negative number
 bysort country varname: egen temp_growth_rate = max(temp_gr_abs)
 
-replace growth_rate_my = temp_growth_rate
-replace growth_rate_my = . if multi != 1 
+replace my_gr = temp_growth_rate
+replace my_gr = . if multi != 1 
 drop temp_* 
 
-br country varname source growth_rate_my if multi == 1
+//br country varname source my_gr if multi == 1
 
 *find the outlier for the growth rate and standard deviation when it's time series
-
-foreach var in growth_rate_my my_sd {
+foreach var in my_gr my_sd {
 	//find the IQR and define the outliers
     egen iqr_`var' = iqr(`var') if source == "my",by(varname)
 	egen qrt_`var' = pctile(`var') if source == "my",p(75) by(varname)  //3rd quartile
-    replace iqr_`var' = qrt_`var'  +1.5*iqr_`var' if source == "my"
-    gen outlier_`var' = (`var' > iqr_`var') if source == "my"
-    drop iqr_`var'
+	
+	local r = 1 //name using category as varname don't support dots (0.5 is not allowed)
+	forval i = 0.5(0.5)2 {
+		gen iqr_`var'_`r' = qrt_`var'  + `i'*iqr_`var' if source == "my" 
+		gen outlier_`var'_`r' = (`var' > iqr_`var'_`r') if source == "my"
+		label var outlier_`var'_`r'  "Outlier: 3Q + `i'IQR"
+		local r = `r' +1
+		display `r'
+	}
+	drop iqr*
 }
 
-gen outlier_all = (outlier_growth_rate_my == 1 & outlier_my_sd == 1) if source == "my" //define the value are outlier when both standard deviation and growth rate are outliers
 
 foreach var of varlist outlier* {
 	//apply the same value to all the country-indicator level for different benchmark source (easier to filter and compare)
@@ -154,7 +159,7 @@ foreach var of varlist outlier* {
 	replace `var' = . if multi != 1
 }
 
-br country varname growth_rate_my my_sd source outlier*
+br country varname my_gr my_sd source outlier*
 
 *specify the quality checking scope:
 gen varname_focus = 0
@@ -162,7 +167,6 @@ replace varname_focus = 1 if inlist(varname,"c_anc","c_anc_any","c_anc_ear","c_a
 replace varname_focus = 1 if inlist(varname,"w_CPR","w_unmet_fp","w_metmod_fp","w_condom_conc","c_fullimm","c_measles","c_treatARI","c_treatdiarrhea","c_underweight")
 replace varname_focus = 1 if inlist(varname,"c_stunted","c_wasted",	"c_ITN","a_hiv","c_vaczero","c_fevertreat","c_diarrhea_pro")
 
-tab varname_focus outlier_all if source == "my"
 
 *save data in dta and excel (feed to tableau dashboard)
 save "${OUT}/Time_Series.dta",replace
