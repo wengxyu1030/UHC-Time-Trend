@@ -62,6 +62,7 @@ gen gap_hefpi = (value_my-value_hefpi)/value_hefpi*100
 replace gap_hefpi = value_my-value_hefpi if value_hefpi>20
 
 /*
+//previous discussion on flagged data points
 gen flag_hefpi = ((gap_hefpi > 10 | gap_hefpi < -10 )& value_hefpi<=20) | ((gap_hefpi>2|gap_hefpi<-2)&value_hefpi>20) //the previous definition of flaged datapoints. 
 */
 
@@ -82,7 +83,6 @@ replace flag_hefpi=1 if value_my==. & value_hefpi!=. //if there's benchmark avai
 replace flag_hefpi=0 if value_my==. & value_hefpi==. //if both of the value and the benchmarks are missing
 replace flag_hefpi=0 if value_my!=. & value_hefpi==. //if the value is not missing while the benchmarks are missing. 
 tab varname_my if flag_hefpi == 1
-//br varname_my value* flag_hefpi if flag_hefpi == 1
 
 *reshape to have source of data as column
 reshape long value_ ,i(survey country year varname_my) j(source) string
@@ -90,6 +90,7 @@ rename value_ value
 
 *housekeeping
 replace value = . if value == 0 
+drop if value == . 
 
 rename varname_my varname
 
@@ -122,7 +123,7 @@ drop temp_*
 *generate quality control indicator required by Sven (Don't average the standard deviation, but to identify the outliers -> Difference divide by year -> Maximum annualized point change between the close points between each other -> Show the time-series. )
 destring year, replace
 sort country varname source year
-bysort country varname source: gen my_gr = (value - value[_n-1])/(year - year[_n-1]) if source == "my"
+bysort country varname source: gen my_gr = (value - value[_n-1]) /(year- year[_n-1]) if source == "my"
 
 gen temp_gr_abs = abs(my_gr) //take the absolute value in case there's big negative number
 bysort country varname: egen temp_growth_rate = max(temp_gr_abs)
@@ -130,6 +131,7 @@ bysort country varname: egen temp_growth_rate = max(temp_gr_abs)
 replace my_gr = temp_growth_rate
 replace my_gr = . if multi != 1 
 drop temp_* 
+
 
 //br country varname source my_gr if multi == 1
 
@@ -142,7 +144,7 @@ foreach var in my_gr my_sd {
 	local r = 1 //name using category as varname don't support dots (0.5 is not allowed)
 	forval i = 0.5(0.5)2 {
 		gen iqr_`var'_`r' = qrt_`var'  + `i'*iqr_`var' if source == "my" 
-		gen outlier_`var'_`r' = (`var' > iqr_`var'_`r') if source == "my"
+		gen outlier_`var'_`r' = (`var' > iqr_`var'_`r') if source == "my" & !mi(`var')
 		label var outlier_`var'_`r'  "Outlier: 3Q + `i'IQR"
 		local r = `r' +1
 		display `r'
