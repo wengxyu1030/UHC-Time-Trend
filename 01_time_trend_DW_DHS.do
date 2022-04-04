@@ -28,21 +28,21 @@ if `pc' == 0 global root "/Users/sunyining/OneDrive/MEASURE UHC DATA"
 if `pc' == 1 global root "C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA - Sven Neelsen's files"
 
 * Define path for data sources
-global SOURCE "${root}/STATA/DATA/SC/ADePT READY/MICS"
+global SOURCE "${root}/STATA/DATA/SC/ADePT READY"
 
 * Define path for INTERMEDIATE
-global INTER "${SOURCE}/Time_Series/INTER"
+global INTER "${SOURCE}/MICS/Time_Series/INTER"
 
 * Define path for output data
-global OUT "${SOURCE}/Time_Series/FINAL"
+global OUT "${SOURCE}/MICS/Time_Series/FINAL"
 
 ***************************
 *** Combine the Microdata**
 ***************************
 //ssc install fs
-foreach subfolder in DHS-Recode-I-Nov2021 DHS-Recode-II-Nov2021 DHS-Recode-III-Nov2021 DHS-Recode-IV-Dec2021 DHS-Recode-V-Dec2021 DHS-Recode-VI-Dec2021 DHS-Recode-VII-Dec2021 AIS MIS{
+foreach subfolder in DHS-Recode-I DHS-Recode-II DHS-Recode-III DHS-Recode-IV DHS-Recode-V DHS-Recode-VI DHS-Recode-VII AIS MIS{
 
-global DATA "${SOURCE}/`subfolder'" 
+global DATA "${SOURCE}/DHS/`subfolder'" 
 cd "${DATA}"
 fs  *.dta
 local firstfile: word 1 of `r(files)'
@@ -65,7 +65,7 @@ use "${DATA}/`survey'",clear
     }
 	
 	***for variables generated from 4_sexual_health 5_woman_anthropometrics
-	foreach var of var w_CPR w_unmet_fp	w_need_fp w_metany_fp	w_metmod_fp w_metany_fp_q  w_bmi_1549 w_height_1549 w_obese_1549 w_overweight_1549 w_married w_papsmear w_mammogram {
+	foreach var of var w_CPR w_unmet_fp	w_need_fp w_metany_fp	w_metmod_fp w_metany_fp_q w_bmi_1549 w_height_1549 w_obese_1549 w_overweight_1549 w_condom_conc w_married w_papsmear w_mammogram {
 	egen pop_`var' = wtmean(`var'), weight(w_sampleweight)
 	}
 	
@@ -83,11 +83,11 @@ use "${DATA}/`survey'",clear
     }
 	
 	***for variables generated from 9_child_anthropometrics
-	foreach var of var c_underweight c_stunted	c_wfa  c_hfa  c_wfh  c_stunted_sev c_stu_was c_stu_was_sev {
+	foreach var of var 	c_underweight c_stunted c_underweight_sev ///
+	c_wasted c_wasted_sev  c_hfa c_wfa c_wfh c_stunted_sev c_stu_was c_stu_was_sev {
     egen pop_`var' = wtmean(`var'),weight(ant_sampleweight)
-    }
+    } 
 	
-	//!c_stunted_sev is not in DHS-I
 	
 	***for variables generated from 10_child_mortality
 	foreach var of var mor_ali c_magebrt {

@@ -90,7 +90,6 @@ rename value_ value
 
 *housekeeping
 replace value = . if value == 0 
-drop if value == . 
 
 rename varname_my varname
 
@@ -99,6 +98,7 @@ replace survey = survey1
 drop survey1
 
 keep binary survey country year varname source iso3c iso2c value region subregion surveyid missing gap_hefpi flag_hefpi
+drop if value == . 
 
 *generate standard deviation data with benchmarks (considering limited time-series, the sd only applies to survey-variable level comparing difference between source)
 egen hefpi_sd = sd(value) if inlist(source,"hefpi","my"),by(surveyid varname)

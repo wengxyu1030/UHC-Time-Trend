@@ -20,13 +20,13 @@ if `pc' == 1 global root "C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA - Sven 
 global DO "${root}/STATA/DO/SC/UHC-Time-Trend/UHC-Time-Trend"
 
 * Define path for data sources
-global SOURCE "${root}/STATA/DATA/SC/ADePT READY/MICS"
+global SOURCE "${root}/STATA/DATA/SC/ADePT READY"
 
 * Define path for INTERMEDIATE
-global INTER "${SOURCE}/Time_Series/INTER"
+global INTER "${SOURCE}/MICS/Time_Series/INTER"
 
 * Define path for output data
-global OUT "${SOURCE}/Time_Series/FINAL"
+global OUT "${SOURCE}/MICS/Time_Series/FINAL"
 
 *************************************
 *** run all the time series files ***
