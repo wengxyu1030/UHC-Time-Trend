@@ -95,7 +95,11 @@ use "${DATA}/`survey'",clear
     }
 	
 	***for variables generated from 11_child_other
-	foreach var of var w_mateduc c_ITN{
+	capture confirm var w_mateduc //some coding mistakenly renamed as w_mateduc, this is a temporary solution,should go back and change. 
+	if _rc == 0 {
+	rename w_mateduc c_mateduc
+	}
+	foreach var of var c_mateduc c_ITN{
 	egen pop_`var' = wtmean(`var'),weight(hh_sampleweight)
 	}
 	
