@@ -41,7 +41,7 @@ global OUT "${SOURCE}/Time_Series/FINAL"
 ***************************
 //ssc install fs
 
-foreach subfolder in MICS2-Dec2021 MICS3-Dec2021 MICS4-Dec2021 MICS5-Dec2021 MICS6-Oct2021 {
+foreach subfolder in MICS2 MICS3 MICS4 MICS5 MICS6 {
 global DATA "${SOURCE}/`subfolder'" 
 cd "${DATA}"
 fs  *.dta
@@ -99,7 +99,7 @@ egen pop_w_sampleweight = wtmean(w_sampleweight), weight(w_sampleweight)
     }
 	
 	***for variables generated from 10_child_mortality
-	foreach var of var mor_ade mor_afl mor_ali mor_bord ///
+	foreach var of var mor_ade mor_afl mor_ali ///
 	mor_int mor_male c_magebrt {
     egen pop_`var' = wtmean(`var'), weight(w_sampleweight)
     }
