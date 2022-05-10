@@ -40,7 +40,8 @@ global OUT "${SOURCE}/MICS/Time_Series/FINAL"
 *** Combine the Microdata**
 ***************************
 //ssc install fs
-foreach subfolder in DHS-Recode-I DHS-Recode-II DHS-Recode-III DHS-Recode-IV DHS-Recode-V DHS-Recode-VI DHS-Recode-VII AIS MIS{
+
+foreach subfolder in DHS-Recode-I DHS-Recode-II DHS-Recode-III DHS-Recode-IV DHS-Recode-V DHS-Recode-VI DHS-Recode-VII AIS MIS {
 
 global DATA "${SOURCE}/DHS/`subfolder'" 
 cd "${DATA}"
